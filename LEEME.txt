@@ -1,6 +1,6 @@
-## Prueba de Diagnóstico
+Prueba de Diagnóstico
 
-## Requisitos
+Requisitos
 
     PHP 8.x
 
@@ -13,7 +13,6 @@
 1.  Clona este repositorio o descarga la carpeta raiz.
 
 2.  En la raíz de esta carpeta existe una carpeta llamada sql, la cual contiene el script para la creación de la base de datos.
-
 
     Cárgalo en tu gestor de base de datos preferido.
     Este script ya contiene filas de ejemplo en las tablas bodegas, sucursales y monedas. Puedes editarlo para agregar, eliminar o modificar dichas filas.
