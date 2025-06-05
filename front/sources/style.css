@@ -1,0 +1,91 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  color: #000000;
+  margin: 50px auto 50px auto;
+  text-align: center;
+  font-size: 40px;
+}
+
+form#formProducto {
+  margin-top: 40px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 12px;
+  width: 60vw;
+  max-width: 800px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  box-sizing: border-box;
+}
+
+.form-group {
+  display: flex;
+  gap: 20px;
+}
+
+.col {
+  flex: 1;
+}
+
+.materiales {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+label,
+textarea {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+fieldset {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+textarea {
+  grid-column: span 2;
+}
+
+button#guardarBtn {
+  background-color: #1aab8a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 20px auto 0 auto;
+  display: block;
+  width: 50%;
+}
+
+button#guardarBtn:hover {
+  background-color: #179c7e;
+}

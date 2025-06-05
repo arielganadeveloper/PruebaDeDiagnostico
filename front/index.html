@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Registro de Producto</title>
+    <link rel="stylesheet" href="sources/style.css" />
+  </head>
+  <body>
+    <form id="formProducto">
+      <h1>Formulario de Producto</h1>
+      <div class="form-group">
+        <div class="col izquierda">
+          <label for="codigo">Código del Producto</label>
+          <input type="text" id="codigo" name="codigo" />
+
+          <label for="bodega">Bodega</label>
+          <select id="bodega" name="bodega">
+            <option value=""></option>
+          </select>
+
+          <label for="moneda">Moneda</label>
+          <select id="moneda" name="moneda">
+            <option value=""></option>
+          </select>
+        </div>
+
+        <div class="col derecha">
+          <label for="nombre">Nombre del Producto</label>
+          <input type="text" id="nombre" name="nombre" />
+
+          <label for="sucursal">Sucursal</label>
+          <select id="sucursal" name="sucursal">
+            <option value=""></option>
+          </select>
+
+          <label for="precio">Precio</label>
+          <input type="text" id="precio" name="precio" />
+        </div>
+      </div>
+
+      <fieldset>
+        <legend>Material del Producto</legend>
+        <div class="materiales">
+          <label
+            ><input type="checkbox" name="material[]" value="Plástico" />
+            Plástico</label
+          >
+          <label
+            ><input type="checkbox" name="material[]" value="Metal" />
+            Metal</label
+          >
+          <label
+            ><input type="checkbox" name="material[]" value="Madera" />
+            Madera</label
+          >
+          <label
+            ><input type="checkbox" name="material[]" value="Vidrio" />
+            Vidrio</label
+          >
+          <label
+            ><input type="checkbox" name="material[]" value="Textil" />
+            textil</label
+          >
+        </div>
+      </fieldset>
+
+      <label for="descripcion">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        rows="5"
+        cols="50"
+      ></textarea>
+
+      <button type="button" id="guardarBtn">Guardar Producto</button>
+    </form>
+
+    <script src="./sources/script.js"></script>
+  </body>
+</html>
