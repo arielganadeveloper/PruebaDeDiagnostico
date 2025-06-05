@@ -1,4 +1,10 @@
-document.getElementById("guardarBtn").addEventListener("click", function () {
+document
+  .getElementById("guardarBtn")
+  .addEventListener("click", guardarProducto);
+window.addEventListener("DOMContentLoaded", cargarDatosIniciales);
+
+// Función principal que se ejecuta al guardar
+function guardarProducto() {
   const codigo = document.getElementById("codigo").value.trim();
   const nombre = document.getElementById("nombre").value.trim();
   const bodega = document.getElementById("bodega").value;
@@ -10,95 +16,128 @@ document.getElementById("guardarBtn").addEventListener("click", function () {
     ...document.querySelectorAll('input[name="material[]"]:checked'),
   ].map((m) => m.value);
 
-  // Validar Código del Producto
-  if (codigo === "") {
-    alert("El código del producto no puede estar en blanco.");
+  if (
+    !validarProducto(
+      codigo,
+      nombre,
+      bodega,
+      sucursal,
+      moneda,
+      precio,
+      descripcion,
+      materiales
+    )
+  )
     return;
-  }
-  if (codigo.length < 5 || codigo.length > 500) {
-    alert("El código del producto debe tener entre 5 y 15 caracteres.");
-    return;
-  }
-  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,15}$/.test(codigo)) {
-    alert("El código del producto debe contener letras y números.");
-    return;
-  }
-  // termino de funcion de validacion del producto
 
-  // Validar si el código ya existe
+  if (!validarCodigoExiste(codigo)) return;
+
+  enviarProducto({
+    codigo,
+    nombre,
+    bodega,
+    sucursal,
+    moneda,
+    precio,
+    descripcion,
+    materiales,
+  });
+}
+
+// Validaciones generales
+function validarProducto(
+  codigo,
+  nombre,
+  bodega,
+  sucursal,
+  moneda,
+  precio,
+  descripcion,
+  materiales
+) {
+  if (
+    codigo === "" ||
+    codigo.length < 5 ||
+    codigo.length > 15 ||
+    !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,15}$/.test(codigo)
+  ) {
+    alert(
+      "Código inválido. Debe tener entre 5 y 15 caracteres, contener letras y números."
+    );
+    return false;
+  }
+
+  if (nombre === "" || nombre.length < 2 || nombre.length > 50) {
+    alert("El nombre debe tener entre 2 y 50 caracteres.");
+    return false;
+  }
+
+  if (bodega === "") {
+    alert("Debe seleccionar una bodega.");
+    return false;
+  }
+
+  if (sucursal === "") {
+    alert("Debe seleccionar una sucursal para la bodega.");
+    return false;
+  }
+
+  if (moneda === "") {
+    alert("Debe seleccionar una moneda.");
+    return false;
+  }
+
+  if (precio === "" || !/^\d+(\.\d{1,2})?$/.test(precio)) {
+    alert("El precio debe ser un número positivo con hasta 2 decimales.");
+    return false;
+  }
+
+  if (materiales.length < 2) {
+    alert("Debe seleccionar al menos dos materiales.");
+    return false;
+  }
+
+  if (
+    descripcion === "" ||
+    descripcion.length < 10 ||
+    descripcion.length > 1000
+  ) {
+    alert("La descripción debe tener entre 10 y 1000 caracteres.");
+    return false;
+  }
+
+  return true;
+}
+
+// Validar si ya existe el código (síncrono)
+function validarCodigoExiste(codigo) {
   const xhrCheck = new XMLHttpRequest();
-
-  xhrCheck.open("POST", "../back/validacion.php", false); // síncrono para validación previa
+  xhrCheck.open("POST", "../BackEnd/validacion.php", false); // síncrono
   xhrCheck.setRequestHeader(
     "Content-type",
     "application/x-www-form-urlencoded"
   );
   xhrCheck.send("codigo=" + encodeURIComponent(codigo));
+
   if (xhrCheck.responseText === "existe") {
     alert("El código del producto ya está registrado.");
-    return;
-  }
-  // termino de validacion de codigo
-
-  // Validar Nombre
-  if (nombre === "") {
-    alert("El nombre del producto no puede estar en blanco.");
-    return;
-  }
-  if (nombre.length < 2 || nombre.length > 50) {
-    alert("El nombre del producto debe tener entre 2 y 50 caracteres.");
-    return;
+    return false;
   }
 
-  // Validar Bodega
-  if (bodega === "") {
-    alert("Debe seleccionar una bodega.");
-    return;
-  }
+  return true;
+}
 
-  // Validar Sucursal
-  if (sucursal === "") {
-    alert("Debe seleccionar una sucursal para la bodega seleccionada.");
-    return;
-  }
-
-  // Validar Moneda
-  if (moneda === "") {
-    alert("Debe seleccionar una moneda para el producto.");
-    return;
-  }
-
-  // Validar Precio
-  if (precio === "") {
-    alert("El precio del producto no puede estar en blanco.");
-    return;
-  }
-  //validar numero positvo con hasta 2 decimales
-  if (!/^\d+(\.\d{1,2})?$/.test(precio)) {
-    alert(
-      "El precio del producto debe ser un número positivo con hasta dos decimales."
-    );
-    return;
-  }
-
-  // Validar Materiales
-  if (materiales.length < 2) {
-    alert("Debe seleccionar al menos dos materiales para el producto.");
-    return;
-  }
-
-  // Validar Descripción
-  if (descripcion === "") {
-    alert("La descripción del producto no puede estar en blanco.");
-    return;
-  }
-  // validar largo de la descripcion
-  if (descripcion.length < 10 || descripcion.length > 1000) {
-    alert("La descripción del producto debe tener entre 10 y 1000 caracteres.");
-    return;
-  }
-
-  // enviar por AJAX
+// Enviar producto por AJAX
+function enviarProducto({
+  codigo,
+  nombre,
+  bodega,
+  sucursal,
+  moneda,
+  precio,
+  descripcion,
+  materiales,
+}) {
   const datos = new FormData();
   datos.append("codigo", codigo);
   datos.append("nombre", nombre);
@@ -110,26 +149,36 @@ document.getElementById("guardarBtn").addEventListener("click", function () {
   materiales.forEach((m) => datos.append("material[]", m));
 
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "../back/guardar.php", true);
+  xhr.open("POST", "../BackEnd/guardar.php", true);
   xhr.onload = function () {
     if (xhr.status === 200) {
-      alert("Producto ingresado con exito");
+      alert("Producto ingresado con éxito.");
       document.getElementById("formProducto").reset();
     } else {
       alert("Error al guardar el producto.");
     }
   };
   xhr.send(datos);
-});
-window.addEventListener("DOMContentLoaded", () => {
-  // Cargar bodegas dinamicamente
-  fetch("../back/datos_dinamicos.php?tabla=bodegas")
-    .then((res) => res.text()) // 👈 Cambia a .text() primero
+}
+
+// Cargar bodegas, monedas y manejar sucursales
+function cargarDatosIniciales() {
+  cargarSelect("../BackEnd/datos_dinamicos.php?tabla=bodegas", "bodega");
+  cargarSelect("../BackEnd/datos_dinamicos.php?tabla=monedas", "moneda");
+
+  document
+    .getElementById("bodega")
+    .addEventListener("change", cargarSucursales);
+}
+
+// Función reutilizable para cargar select
+function cargarSelect(url, selectId) {
+  fetch(url)
+    .then((res) => res.text())
     .then((text) => {
-      console.log("Respuesta bodegas:", text); // 👈 Ve qué estás recibiendo
       try {
-        const data = JSON.parse(text); // 👈 Intenta parsear
-        const select = document.getElementById("bodega");
+        const data = JSON.parse(text);
+        const select = document.getElementById(selectId);
         data.forEach((item) => {
           const option = document.createElement("option");
           option.value = item.id;
@@ -137,44 +186,29 @@ window.addEventListener("DOMContentLoaded", () => {
           select.appendChild(option);
         });
       } catch (e) {
-        console.error("JSON inválido en bodegas:", e);
+        console.error(`Error cargando ${selectId}:`, e);
       }
     });
+}
 
-  // Cargar monedas
-  fetch("../back/datos_dinamicos.php?tabla=monedas")
-    .then((res) => res.json())
-    .then((data) => {
-      const select = document.getElementById("moneda");
-      data.forEach((item) => {
-        const option = document.createElement("option");
-        option.value = item.id;
-        option.textContent = item.nombre;
-        select.appendChild(option);
-      });
-    });
+// Cargar sucursales al cambiar bodega
+function cargarSucursales() {
+  const bodegaId = this.value;
+  const sucursalSelect = document.getElementById("sucursal");
+  sucursalSelect.innerHTML = '<option value=""></option>';
 
-  // Cargar sucursales al seleccionar bodega
-  document.getElementById("bodega").addEventListener("change", function () {
-    const bodegaId = this.value;
-    const sucursalSelect = document.getElementById("sucursal");
-
-    // Reset sucursales
-    sucursalSelect.innerHTML = '<option value=""></option>';
-
-    if (bodegaId !== "") {
-      fetch(
-        `../back/datos_dinamicos.php?tabla=sucursales&bodega_id=${bodegaId}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          data.forEach((item) => {
-            const option = document.createElement("option");
-            option.value = item.id;
-            option.textContent = item.nombre;
-            sucursalSelect.appendChild(option);
-          });
+  if (bodegaId !== "") {
+    fetch(
+      `../BackEnd/datos_dinamicos.php?tabla=sucursales&bodega_id=${bodegaId}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach((item) => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = item.nombre;
+          sucursalSelect.appendChild(option);
         });
-    }
-  });
-});
+      });
+  }
+}
